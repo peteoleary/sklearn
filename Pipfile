@@ -1,0 +1,18 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+
+[packages]
+scikit-learn = "*"
+pandas = "*"
+nltk = "*"
+sqlite3 = "*"
+libsqlite3-dev = "*"
+libsqlite3 = "*"
+
+[requires]
+python_version = "3.7"
