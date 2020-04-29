@@ -7,30 +7,10 @@ def cleanhtml(raw_html):
   cleantext = re.sub(cleanr, '', raw_html)
   return cleantext
 
-def cleanpunc(t):
-    cleanr = re.compile('[\n\.,;]')
-    cleantext = re.sub(cleanr, ' ', t)
-    return cleantext
-
 def clean_one_value(v):
    v = cleanhtml(v)
-   v = cleanpunc(v)
-   v = remove_unused_words(v)
    # TODO: augment with word stemming, plurals, synonyms?
    return v
-
-def filter_fun(v):
-  if v.isnumeric():
-    return False
-  if (v in ['oz', 'ml', 'gift', 'basket', 'includes']):
-    return False
-  return True
-
-
-def remove_unused_words(v):
-  words = v.split()
-  words = filter(filter_fun, words)
-  return ' '.join(list(words))
 
 # TODO: add the part number in here somehow?
 input_lines = []
@@ -43,7 +23,27 @@ with open('vip_gifts_and_baskets products 2020-04-23T0935.csv') as csvfile:
         input_lines.append(clean_one_value(row['Products Full Description']) + ' ' + clean_one_value(row['Products Contents']))
         input_part_nums.append(row['Products Part Number'])
 
-from sklearn.feature_extraction.text import TfidfVectorizer
-gifts_vectorizer = TfidfVectorizer(stop_words = 'english')
+from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 
-gift_features = gifts_vectorizer.fit_transform(input_lines)
+cv = CountVectorizer(input_lines, max_df=0.50, min_df=5)
+word_count_vector=cv.fit_transform(input_lines)
+
+import pandas as pd
+
+df_vocabulary = pd.DataFrame(word_count_vector.toarray().sum(axis=0), cv.get_feature_names())
+
+gifts_vectorizer = TfidfTransformer()
+
+gift_features = gifts_vectorizer.fit(word_count_vector)
+
+df_stop_words = pd.DataFrame(cv.stop_words_)
+
+df_idf = pd.DataFrame(gifts_vectorizer.idf_, index=cv.get_feature_names(),columns=["idf_weights"])
+ 
+# sort ascending
+df_idf.sort_values(by=['idf_weights'])
+
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+  print(df_vocabulary)
+  # print(df_stop_words)
+  # print(df_idf)
