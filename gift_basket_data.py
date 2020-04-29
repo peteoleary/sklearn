@@ -25,20 +25,21 @@ with open('vip_gifts_and_baskets products 2020-04-23T0935.csv') as csvfile:
 
 from sklearn.feature_extraction.text import TfidfTransformer, CountVectorizer
 
-cv = CountVectorizer(input_lines, max_df=0.50, min_df=5)
-word_count_vector=cv.fit_transform(input_lines)
+gifts_vectorizer = CountVectorizer(input_lines, max_df=0.50, min_df=5)
+word_count_vector=gifts_vectorizer.fit_transform(input_lines)
 
 import pandas as pd
 
-df_vocabulary = pd.DataFrame(word_count_vector.toarray().sum(axis=0), cv.get_feature_names())
+# DataFrames for inspection purposes...
+df_vocabulary = pd.DataFrame(word_count_vector.toarray().sum(axis=0), gifts_vectorizer.get_feature_names())
+df_stop_words = pd.DataFrame(gifts_vectorizer.stop_words_)
 
-gifts_vectorizer = TfidfTransformer()
+gifts_tfidf = TfidfTransformer()
 
-gift_features = gifts_vectorizer.fit(word_count_vector)
+gift_features = gifts_tfidf.fit_transform(word_count_vector)
 
-df_stop_words = pd.DataFrame(cv.stop_words_)
 
-df_idf = pd.DataFrame(gifts_vectorizer.idf_, index=cv.get_feature_names(),columns=["idf_weights"])
+df_idf = pd.DataFrame(gifts_tfidf.idf_, index=gifts_vectorizer.get_feature_names(),columns=["idf_weights"])
  
 # sort ascending
 df_idf.sort_values(by=['idf_weights'])

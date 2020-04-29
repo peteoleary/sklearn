@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO,
 
 n_reduced_dimensions = 100
 
-from gift_basket_data import gift_features, gifts_vectorizer, input_lines, input_part_nums
+from gift_basket_data import gift_features, gifts_vectorizer, gifts_tfidf, input_lines, input_part_nums
 
 true_k = 20
 
