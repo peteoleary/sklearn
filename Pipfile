@@ -10,9 +10,6 @@ pylint = "*"
 scikit-learn = "*"
 pandas = "*"
 nltk = "*"
-sqlite3 = "*"
-libsqlite3-dev = "*"
-libsqlite3 = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.8.2"
